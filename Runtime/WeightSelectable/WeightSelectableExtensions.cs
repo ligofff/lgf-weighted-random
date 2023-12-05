@@ -6,39 +6,35 @@ namespace WeightSelectable
 {
     public static class WeightSelectableExtensions
     {
+        private static Random random = new Random();
+
         public static T RandomByWeight<T>(this IEnumerable<T> enumerable) where T : IWeightSelectable
         {
-            var list = enumerable.ToList();
-            
-            if (list == null)
+            if (!enumerable.Any())
             {
-                throw new ArgumentNullException(nameof(enumerable));
-            }
-            if (list.Count == 0)
-            {
-                throw new ArgumentException("Empty list");
+                throw new ArgumentException("Empty collection");
             }
 
-            if (list.Count == 1)
+            float totalWeight = enumerable.Sum(item => item.Weight);
+
+            if (totalWeight <= 0)
             {
-                return list[0];
+                throw new ArgumentException("Total weight must be greater than zero.");
             }
 
-            var cumulative = list.Select(w => w.Weight).ToList();
-            
-            for (int i = 1; i < cumulative.Count; i++)
+            float choice = (float)random.NextDouble() * totalWeight;
+
+            foreach (var item in enumerable)
             {
-                cumulative[i] += list[i - 1].Weight;
+                if (choice < item.Weight)
+                {
+                    return item;
+                }
+                choice -= item.Weight;
             }
 
-            float random = UnityEngine.Random.Range(0, cumulative[cumulative.Count - 1]);
-            int index = cumulative.FindIndex(a => a >= random);
-            if (index == -1)
-            {
-                throw new ArgumentException("Weights must be positive");
-            }
-
-            return list[index];
+            throw new InvalidOperationException("The execution should never reach here.");
         }
     }
+
 }
