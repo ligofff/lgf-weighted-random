@@ -1,0 +1,11 @@
+{
+  "name": "Unity.com.ligofff.lgf-weighted-random.Editor.Tests",
+  "references": [
+    "Unity.com.ligofff.lgf-weighted-random"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": []
+}
