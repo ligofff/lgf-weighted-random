@@ -6,7 +6,29 @@ namespace WeightSelectable
 {
     public static class WeightSelectableExtensions
     {
-        private static Random random = new Random();
+        private static readonly Random Random = new Random();
+        
+        public static T RandomWithoutWeight<T>(this IEnumerable<T> enumerable)
+        {
+            T result = default;
+            int count = 0;
+
+            foreach(var item in enumerable)
+            {
+                count++;
+                if(Random.Next(count) == 0)
+                {
+                    result = item;
+                }
+            }
+    
+            if (count == 0)
+            {
+                throw new InvalidOperationException("The sequence is empty.");
+            }
+
+            return result;
+        }
 
         public static T RandomByWeight<T>(this IEnumerable<T> enumerable) where T : IWeightSelectable
         {
@@ -22,7 +44,7 @@ namespace WeightSelectable
                 throw new ArgumentException("Total weight must be greater than zero.");
             }
 
-            float choice = (float)random.NextDouble() * totalWeight;
+            float choice = (float)Random.NextDouble() * totalWeight;
 
             foreach (var item in enumerable)
             {
@@ -61,7 +83,7 @@ namespace WeightSelectable
             
             for (int i = 0; i < selectedCount; i++)
             {
-                float choice = (float)random.NextDouble() * totalWeight;
+                float choice = (float)Random.NextDouble() * totalWeight;
 
                 for (int j = 0; j < localCollection.Count; j++)
                 {
